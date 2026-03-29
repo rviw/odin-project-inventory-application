@@ -274,6 +274,24 @@ const updateBook = [
   },
 ];
 
+async function deleteBook(req, res) {
+  const id = getPositiveIntegerId(req.params.id);
+
+  if (!id) {
+    return res.status(404).send("Book not found");
+  }
+
+  const book = await db.getBookById(id);
+
+  if (!book) {
+    return res.status(404).send("Book not found");
+  }
+
+  await db.deleteBook(id);
+
+  res.redirect("/books");
+}
+
 module.exports = {
   getBookList,
   getBookDetail,
@@ -281,4 +299,5 @@ module.exports = {
   createBook,
   getBookEditPage,
   updateBook,
+  deleteBook,
 };

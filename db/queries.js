@@ -236,6 +236,16 @@ async function updateBook(
   );
 }
 
+async function deleteBook(id) {
+  await pool.query(
+    `
+      DELETE FROM books
+      WHERE id = $1
+    `,
+    [id],
+  );
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -250,4 +260,5 @@ module.exports = {
   getBookByIsbn,
   createBook,
   updateBook,
+  deleteBook,
 };

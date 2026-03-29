@@ -13,9 +13,7 @@
         <p><%= books.length %> books in this category.</p>
       </section>
 
-      <% if (books.length === 0) { %>
-        <p>No books in this category yet.</p>
-      <% } else { %>
+      <% if (books.length !== 0) { %>
         <section class="card-grid">
           <% books.forEach((book) => { %>
             <article class="card">

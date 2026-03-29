@@ -15,9 +15,13 @@
   --bg: #fff;
   --border: #e5e4e7;
 
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --accent: #1d4ed8;
+  --accent-bg: #f0f9ff;
+  --accent-border: #60a5fa;
+
+  --danger: #dc2626;
+  --danger-border: #f87171;
+  --danger-bg: #fef2f2;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
 
@@ -165,7 +169,7 @@ main > .card + .card {
 }
 
 .error-list {
-  color: red;
+  color: var(--danger);
 }
 
 .form-row input,
@@ -179,7 +183,9 @@ main > .card + .card {
 }
 
 .button {
-  display: inline-block;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 4.5rem;
   padding: 0.7rem 0.9rem;
   border: 1px solid var(--accent-border);
   border-radius: 8px;
@@ -190,12 +196,23 @@ main > .card + .card {
   margin-top: 1rem;
 }
 
+.action-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.button-danger {
+  color: var(--danger);
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
 .site-footer {
   background: var(--accent-bg);
   border-top: 1px solid var(--accent-border);
 }
 .site-footer .container {
-  padding: 1rem 0;
+  padding: 1.25rem 0;
   text-align: center;
   color: var(--accent);
 }
