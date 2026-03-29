@@ -14,8 +14,10 @@ app.use(express.static(assetsPath));
 app.use(express.urlencoded({ extended: true }));
 
 const indexRouter = require("./routes/index");
+const categoriesRouter = require("./routes/categories");
 
 app.use("/", indexRouter);
+app.use("/categories", categoriesRouter);
 
 app.use((req, res) => {
   res.status(404).send("Page not found");

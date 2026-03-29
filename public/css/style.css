@@ -119,6 +119,18 @@ main {
   flex: 1;
 }
 
+.back-link {
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+
+.card h3 a:hover,
+.card h3 a:focus-visible,
+.hero a:hover,
+.hero a:focus-visible {
+  color: var(--accent);
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));

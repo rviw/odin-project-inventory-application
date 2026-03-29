@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") %>
+  </head>
+  <body>
+    <%- include("../partials/header") %>
+
+    <main class="container">
+      <section class="hero">
+        <h2>Categories</h2>
+        <p>Browse the bookstore's inventory categories.</p>
+      </section>
+
+      <% if (categories.length === 0) { %>
+        <p>No categories found.</p>
+      <% } else { %>
+        <section class="card-grid">
+          <% categories.forEach((category) => { %>
+            <article class="card">
+              <h3>
+                <a href="/categories/<%= category.id %>"><%= category.name %></a>
+              </h3>
+              <p><%= category.book_count %> books</p>
+            </article>
+          <% }) %>
+        </section>
+      <% } %>
+    </main>
+
+    <%- include("../partials/footer") %>
+  </body>
+</html>

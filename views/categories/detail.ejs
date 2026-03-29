@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") %>
+  </head>
+  <body>
+    <%- include("../partials/header") %>
+
+    <main class="container">
+      <section class="hero">
+        <p class="back-link"><a href="/categories">← Back to categories</a></p>
+        <h2><%= category.name %></h2>
+        <p><%= books.length %> books in this category.</p>
+      </section>
+
+      <% if (books.length === 0) { %>
+        <p>No books in this category yet.</p>
+      <% } else { %>
+        <section class="card-grid">
+          <% books.forEach((book) => { %>
+            <article class="card">
+              <h3><%= book.title %></h3>
+              <p>Author: <%= book.author_name %></p>
+              <p>ISBN: <%= book.isbn %></p>
+              <p>Stock: <%= book.stock_quantity %></p>
+            </article>
+          <% }) %>
+        </section>
+      <% } %>
+    </main>
+
+    <%- include("../partials/footer") %>
+  </body>
+</html>
