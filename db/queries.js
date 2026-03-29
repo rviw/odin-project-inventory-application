@@ -81,10 +81,61 @@ async function getBooksByCategoryId(categoryId) {
   return rows;
 }
 
+async function getAllAuthors() {
+  const { rows } = await pool.query(`
+    SELECT
+      authors.id,
+      authors.name,
+      COUNT(books.id)::int AS book_count
+    FROM authors
+    LEFT JOIN books ON books.author_id = authors.id
+    GROUP BY authors.id, authors.name
+    ORDER BY authors.name ASC
+  `);
+
+  return rows;
+}
+
+async function getAuthorById(authorId) {
+  const { rows } = await pool.query(
+    `
+      SELECT id, name
+      FROM authors
+      WHERE id = $1
+    `,
+    [authorId],
+  );
+
+  return rows[0];
+}
+
+async function getBooksByAuthorId(authorId) {
+  const { rows } = await pool.query(
+    `
+      SELECT
+        books.id,
+        books.title,
+        books.stock_quantity,
+        books.isbn,
+        categories.name AS category_name
+      FROM books
+      JOIN categories ON categories.id = books.category_id
+      WHERE books.author_id = $1
+      ORDER BY books.title ASC
+    `,
+    [authorId],
+  );
+
+  return rows;
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
   getAllCategories,
   getCategoryById,
   getBooksByCategoryId,
+  getAllAuthors,
+  getAuthorById,
+  getBooksByAuthorId,
 };

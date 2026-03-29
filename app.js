@@ -15,9 +15,11 @@ app.use(express.urlencoded({ extended: true }));
 
 const indexRouter = require("./routes/index");
 const categoriesRouter = require("./routes/categories");
+const authorsRouter = require("./routes/authors");
 
 app.use("/", indexRouter);
 app.use("/categories", categoriesRouter);
+app.use("/authors", authorsRouter);
 
 app.use((req, res) => {
   res.status(404).send("Page not found");

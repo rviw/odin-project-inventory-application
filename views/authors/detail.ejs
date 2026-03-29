@@ -8,19 +8,19 @@
 
     <main class="container">
       <section class="hero">
-        <p class="back-link"><a href="/categories">← Back</a></p>
-        <h2><%= category.name %></h2>
-        <p><%= books.length %> books in this category.</p>
+        <p class="back-link"><a href="/authors">← Back</a></p>
+        <h2><%= author.name %></h2>
+        <p><%= books.length %> books by this author.</p>
       </section>
 
       <% if (books.length === 0) { %>
-        <p>No books in this category yet.</p>
+        <p>No books by this author yet.</p>
       <% } else { %>
         <section class="card-grid">
           <% books.forEach((book) => { %>
             <article class="card">
               <h3><%= book.title %></h3>
-              <p>Author: <%= book.author_name %></p>
+              <p>Category: <%= book.category_name %></p>
               <p>ISBN: <%= book.isbn %></p>
               <p>Stock: <%= book.stock_quantity %></p>
             </article>
