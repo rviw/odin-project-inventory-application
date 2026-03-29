@@ -215,6 +215,27 @@ async function createBook({
   return rows[0];
 }
 
+async function updateBook(
+  id,
+  { title, description, price, stockQuantity, isbn, categoryId, authorId },
+) {
+  await pool.query(
+    `
+      UPDATE books
+      SET
+        title = $1,
+        description = $2,
+        price = $3,
+        stock_quantity = $4,
+        isbn = $5,
+        category_id = $6,
+        author_id = $7
+      WHERE id = $8
+    `,
+    [title, description, price, stockQuantity, isbn, categoryId, authorId, id],
+  );
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -228,4 +249,5 @@ module.exports = {
   getBookById,
   getBookByIsbn,
   createBook,
+  updateBook,
 };

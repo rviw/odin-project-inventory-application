@@ -1,6 +1,16 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const db = require("../db/queries");
 
+function getPositiveIntegerId(value) {
+  const id = Number(value);
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return null;
+  }
+
+  return id;
+}
+
 async function getBookList(req, res) {
   const books = await db.getAllBooks();
 
@@ -11,9 +21,9 @@ async function getBookList(req, res) {
 }
 
 async function getBookDetail(req, res) {
-  const id = Number(req.params.id);
+  const id = getPositiveIntegerId(req.params.id);
 
-  if (!Number.isInteger(id) || id <= 0) {
+  if (!id) {
     return res.status(404).send("Book not found");
   }
 
@@ -37,6 +47,9 @@ async function getBookCreatePage(req, res) {
 
   res.render("books/form", {
     title: "Add Book",
+    formTitle: "Add book",
+    formAction: "/books/new",
+    submitLabel: "Create book",
     book: {},
     categories,
     authors,
@@ -79,17 +92,7 @@ const validateBook = [
     .withMessage("ISBN must be exactly 13 digits.")
     .bail()
     .isNumeric()
-    .withMessage("ISBN must contain digits only.")
-    .bail()
-    .custom(async (value) => {
-      const existingBook = await db.getBookByIsbn(value);
-
-      if (existingBook) {
-        throw new Error("ISBN already exists.");
-      }
-
-      return true;
-    }),
+    .withMessage("ISBN must contain digits only."),
   body("category_id")
     .trim()
     .notEmpty()
@@ -130,6 +133,15 @@ const validateBook = [
 
 const createBook = [
   validateBook,
+  body("isbn").custom(async (value) => {
+    const existingBook = await db.getBookByIsbn(value);
+
+    if (existingBook) {
+      throw new Error("ISBN already exists.");
+    }
+
+    return true;
+  }),
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -141,6 +153,9 @@ const createBook = [
 
       return res.status(400).render("books/form", {
         title: "Add Book",
+        formTitle: "Add book",
+        formAction: "/books/new",
+        submitLabel: "Create book",
         book: req.body,
         categories,
         authors,
@@ -164,9 +179,106 @@ const createBook = [
   },
 ];
 
+async function getBookEditPage(req, res) {
+  const id = getPositiveIntegerId(req.params.id);
+
+  if (!id) {
+    return res.status(404).send("Book not found");
+  }
+
+  const [book, categories, authors] = await Promise.all([
+    db.getBookById(id),
+    db.getAllCategories(),
+    db.getAllAuthors(),
+  ]);
+
+  if (!book) {
+    return res.status(404).send("Book not found");
+  }
+
+  res.render("books/form", {
+    title: `Edit ${book.title}`,
+    formTitle: "Edit book",
+    formAction: `/books/${book.id}/edit`,
+    submitLabel: "Save changes",
+    book,
+    categories,
+    authors,
+    errors: [],
+  });
+}
+
+const updateBook = [
+  validateBook,
+  body("isbn").custom(async (value, { req }) => {
+    const id = getPositiveIntegerId(req.params.id);
+
+    if (!id) {
+      throw new Error("Book not found.");
+    }
+
+    const existingBook = await db.getBookByIsbn(value);
+
+    if (existingBook && existingBook.id !== id) {
+      throw new Error("ISBN already exists.");
+    }
+
+    return true;
+  }),
+  async (req, res) => {
+    const id = getPositiveIntegerId(req.params.id);
+
+    if (!id) {
+      return res.status(404).send("Book not found");
+    }
+
+    const existingBook = await db.getBookById(id);
+
+    if (!existingBook) {
+      return res.status(404).send("Book not found");
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const [categories, authors] = await Promise.all([
+        db.getAllCategories(),
+        db.getAllAuthors(),
+      ]);
+
+      return res.status(400).render("books/form", {
+        title: `Edit ${existingBook.title}`,
+        formTitle: "Edit book",
+        formAction: `/books/${id}/edit`,
+        submitLabel: "Save changes",
+        book: { ...req.body, id },
+        categories,
+        authors,
+        errors: errors.array(),
+      });
+    }
+
+    const data = matchedData(req);
+
+    await db.updateBook(id, {
+      title: data.title,
+      description: data.description,
+      price: data.price,
+      stockQuantity: data.stock_quantity,
+      isbn: data.isbn,
+      categoryId: data.category_id,
+      authorId: data.author_id,
+    });
+
+    res.redirect(`/books/${id}`);
+  },
+];
+
 module.exports = {
   getBookList,
   getBookDetail,
   getBookCreatePage,
   createBook,
+  getBookEditPage,
+  updateBook,
 };

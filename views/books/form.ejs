@@ -9,8 +9,8 @@
     <main class="container">
       <section class="hero">
         <p class="back-link"><a href="/books">← Back</a></p>
-        <h2>Add book</h2>
-        <p>Create a new book record in the inventory.</p>
+        <h2><%= formTitle %></h2>
+        <p>Save a book record in the inventory.</p>
       </section>
 
       <% if (errors.length > 0) { %>
@@ -25,7 +25,7 @@
       <% } %>
 
       <section class="card">
-        <form class="form-stack" action="/books/new" method="post">
+        <form class="form-stack" action="<%= formAction %>" method="post">
           <div class="form-row">
             <label for="title">Title</label>
             <input
@@ -116,7 +116,7 @@
           </div>
 
           <div class="form-actions">
-            <button class="button" type="submit">Create book</button>
+            <button class="button" type="submit"><%= submitLabel %></button>
           </div>
         </form>
       </section>

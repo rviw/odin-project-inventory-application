@@ -6,6 +6,8 @@ const booksRouter = Router();
 booksRouter.get("/", bookController.getBookList);
 booksRouter.get("/new", bookController.getBookCreatePage);
 booksRouter.post("/new", bookController.createBook);
+booksRouter.get("/:id/edit", bookController.getBookEditPage);
+booksRouter.post("/:id/edit", bookController.updateBook);
 booksRouter.get("/:id", bookController.getBookDetail);
 
 module.exports = booksRouter;
