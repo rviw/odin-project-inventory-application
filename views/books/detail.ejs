@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") %>
+  </head>
+  <body>
+    <%- include("../partials/header") %>
+
+    <main class="container">
+      <section class="hero">
+        <p class="back-link"><a href="/books">← Back</a></p>
+        <h2><%= book.title %></h2>
+        <p><%= book.description %></p>
+      </section>
+
+      <section class="card-grid">
+        <article class="card">
+          <h3>Details</h3>
+          <p>Author: <%= book.author_name %></p>
+          <p>Category: <%= book.category_name %></p>
+          <p>ISBN: <%= book.isbn %></p>
+          <p>Price: $<%= Number(book.price).toFixed(2) %></p>
+          <p>Stock: <%= book.stock_quantity %></p>
+        </article>
+      </section>
+    </main>
+
+    <%- include("../partials/footer") %>
+  </body>
+</html>
