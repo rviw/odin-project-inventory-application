@@ -272,6 +272,17 @@ async function createCategory(name) {
   return rows[0];
 }
 
+async function updateCategory(id, name) {
+  await pool.query(
+    `
+      UPDATE categories
+      SET name = $1
+      WHERE id = $2
+    `,
+    [name, id],
+  );
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -289,4 +300,5 @@ module.exports = {
   updateBook,
   deleteBook,
   createCategory,
+  updateCategory,
 };

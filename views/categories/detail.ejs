@@ -11,6 +11,7 @@
         <p class="back-link"><a href="/categories">← Back</a></p>
         <h2><%= category.name %></h2>
         <p><%= books.length %> books in this category.</p>
+        <a class="button" href="/categories/<%= category.id %>/edit">Edit</a>
       </section>
 
       <% if (books.length !== 0) { %>

@@ -93,9 +93,92 @@ const createCategory = [
   },
 ];
 
+async function getCategoryEditPage(req, res) {
+  const id = getPositiveIntegerId(req.params.id);
+
+  if (!id) {
+    return res.status(404).send("Category not found");
+  }
+
+  const category = await db.getCategoryById(id);
+
+  if (!category) {
+    return res.status(404).send("Category not found");
+  }
+
+  res.render("categories/form", {
+    title: `Edit ${category.name}`,
+    formTitle: "Edit category",
+    formAction: `/categories/${category.id}/edit`,
+    submitLabel: "Save changes",
+    category,
+    errors: [],
+  });
+}
+
+const updateCategory = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Category name is required.")
+    .bail()
+    .isLength({ min: 2, max: 40 })
+    .withMessage("Category name must be between 2 and 40 characters.")
+    .bail()
+    .custom(async (value, { req }) => {
+      const id = getPositiveIntegerId(req.params.id);
+
+      if (!id) {
+        throw new Error("Category not found.");
+      }
+
+      const existingCategory = await db.getCategoryByName(value);
+
+      if (existingCategory && existingCategory.id !== id) {
+        throw new Error("Category name already exists.");
+      }
+
+      return true;
+    }),
+  async (req, res) => {
+    const id = getPositiveIntegerId(req.params.id);
+
+    if (!id) {
+      return res.status(404).send("Category not found");
+    }
+
+    const existingCategory = await db.getCategoryById(id);
+
+    if (!existingCategory) {
+      return res.status(404).send("Category not found");
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("categories/form", {
+        title: `Edit ${existingCategory.name}`,
+        formTitle: "Edit category",
+        formAction: `/categories/${id}/edit`,
+        submitLabel: "Save changes",
+        category: { ...req.body, id },
+        errors: errors.array(),
+      });
+    }
+
+    const data = matchedData(req);
+
+    await db.updateCategory(id, data.name);
+
+    res.redirect(`/categories/${id}`);
+  },
+];
+
 module.exports = {
   getCategoryList,
   getCategoryDetail,
   getCategoryCreatePage,
   createCategory,
+  getCategoryEditPage,
+  updateCategory,
 };

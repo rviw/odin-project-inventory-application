@@ -6,6 +6,8 @@ const categoriesRouter = Router();
 categoriesRouter.get("/", categoryController.getCategoryList);
 categoriesRouter.get("/new", categoryController.getCategoryCreatePage);
 categoriesRouter.post("/new", categoryController.createCategory);
+categoriesRouter.get("/:id/edit", categoryController.getCategoryEditPage);
+categoriesRouter.post("/:id/edit", categoryController.updateCategory);
 categoriesRouter.get("/:id", categoryController.getCategoryDetail);
 
 module.exports = categoriesRouter;
