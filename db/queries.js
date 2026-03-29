@@ -283,6 +283,16 @@ async function updateCategory(id, name) {
   );
 }
 
+async function deleteCategory(id) {
+  await pool.query(
+    `
+      DELETE FROM categories
+      WHERE id = $1
+    `,
+    [id],
+  );
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -301,4 +311,5 @@ module.exports = {
   deleteBook,
   createCategory,
   updateCategory,
+  deleteCategory,
 };

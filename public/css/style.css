@@ -168,7 +168,7 @@ main > .card + .card {
   gap: 0.5rem;
 }
 
-.error-list {
+.error {
   color: var(--danger);
 }
 

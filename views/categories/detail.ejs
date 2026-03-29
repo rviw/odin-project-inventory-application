@@ -11,8 +11,27 @@
         <p class="back-link"><a href="/categories">← Back</a></p>
         <h2><%= category.name %></h2>
         <p><%= books.length %> books in this category.</p>
-        <a class="button" href="/categories/<%= category.id %>/edit">Edit</a>
+
+        <div class="action-row">
+          <a class="button" href="/categories/<%= category.id %>/edit">Edit</a>
+
+          <form action="/categories/<%= category.id %>/delete" method="post">
+            <button
+              class="button button-danger"
+              type="submit"
+              onclick="return confirm('Delete this category?');"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
       </section>
+
+      <% if (deleteError) { %>
+        <section class="card">
+          <p class="error"><%= deleteError %></p>
+        </section>
+      <% } %>
 
       <% if (books.length !== 0) { %>
         <section class="card-grid">

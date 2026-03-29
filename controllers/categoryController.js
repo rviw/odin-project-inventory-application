@@ -40,6 +40,7 @@ async function getCategoryDetail(req, res) {
     title: category.name,
     category,
     books,
+    deleteError: null,
   });
 }
 
@@ -174,6 +175,35 @@ const updateCategory = [
   },
 ];
 
+async function deleteCategory(req, res) {
+  const id = getPositiveIntegerId(req.params.id);
+
+  if (!id) {
+    return res.status(404).send("Category not found");
+  }
+
+  const [category, books] = await Promise.all([
+    db.getCategoryById(id),
+    db.getBooksByCategoryId(id),
+  ]);
+
+  if (!category) {
+    return res.status(404).send("Category not found");
+  }
+
+  if (books.length > 0) {
+    return res.status(400).render("categories/detail", {
+      title: category.name,
+      category,
+      books,
+      deleteError: "You cannot delete a category that still has books.",
+    });
+  }
+
+  await db.deleteCategory(id);
+  res.redirect("/categories");
+}
+
 module.exports = {
   getCategoryList,
   getCategoryDetail,
@@ -181,4 +211,5 @@ module.exports = {
   createCategory,
   getCategoryEditPage,
   updateCategory,
+  deleteCategory,
 };
