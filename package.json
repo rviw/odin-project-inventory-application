@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node --watch app.js",
+    "start": "node app.js",
+    "dev": "node --watch app.js",
     "db:seed": "node db/populatedb.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
