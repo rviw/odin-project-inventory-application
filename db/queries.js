@@ -173,6 +173,48 @@ async function getBookById(bookId) {
   return rows[0];
 }
 
+async function getBookByIsbn(isbn) {
+  const { rows } = await pool.query(
+    `
+      SELECT id
+      FROM books
+      WHERE isbn = $1
+    `,
+    [isbn],
+  );
+
+  return rows[0];
+}
+
+async function createBook({
+  title,
+  description,
+  price,
+  stockQuantity,
+  isbn,
+  categoryId,
+  authorId,
+}) {
+  const { rows } = await pool.query(
+    `
+      INSERT INTO books (
+        title,
+        description,
+        price,
+        stock_quantity,
+        isbn,
+        category_id,
+        author_id
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id
+    `,
+    [title, description, price, stockQuantity, isbn, categoryId, authorId],
+  );
+
+  return rows[0];
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -184,4 +226,6 @@ module.exports = {
   getBooksByAuthorId,
   getAllBooks,
   getBookById,
+  getBookByIsbn,
+  createBook,
 };

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") %>
+  </head>
+  <body>
+    <%- include("../partials/header") %>
+
+    <main class="container">
+      <section class="hero">
+        <p class="back-link"><a href="/books">← Back</a></p>
+        <h2>Add book</h2>
+        <p>Create a new book record in the inventory.</p>
+      </section>
+
+      <% if (errors.length > 0) { %>
+        <section class="card">
+          <h3>Please fix the following:</h3>
+          <ul class="error-list">
+            <% errors.forEach((error) => { %>
+              <li><%= error.msg %></li>
+            <% }) %>
+          </ul>
+        </section>
+      <% } %>
+
+      <section class="card">
+        <form class="form-stack" action="/books/new" method="post">
+          <div class="form-row">
+            <label for="title">Title</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value="<%= book.title || "" %>"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              rows="2"
+              required
+            ><%= book.description || "" %></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="price">Price</label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              min="0"
+              step="0.01"
+              value="<%= book.price || "" %>"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="stock_quantity">Stock quantity</label>
+            <input
+              id="stock_quantity"
+              name="stock_quantity"
+              type="number"
+              min="0"
+              step="1"
+              value="<%= book.stock_quantity || "" %>"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="isbn">ISBN</label>
+            <input
+              id="isbn"
+              name="isbn"
+              type="text"
+              inputmode="numeric"
+              value="<%= book.isbn || "" %>"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="category_id">Category</label>
+            <select id="category_id" name="category_id" required>
+              <option value="">Select a category</option>
+              <% categories.forEach((category) => { %>
+                <option
+                  value="<%= category.id %>"
+                  <%= String(book.category_id) === String(category.id) ? "selected" : "" %>
+                >
+                  <%= category.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="author_id">Author</label>
+            <select id="author_id" name="author_id" required>
+              <option value="">Select an author</option>
+              <% authors.forEach((author) => { %>
+                <option
+                  value="<%= author.id %>"
+                  <%= String(book.author_id) === String(author.id) ? "selected" : "" %>
+                >
+                  <%= author.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button class="button" type="submit">Create book</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <%- include("../partials/footer") %>
+  </body>
+</html>
