@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("../partials/head") %>
+  </head>
+  <body>
+    <%- include("../partials/header") %>
+
+    <main class="container">
+      <section class="hero">
+        <p class="back-link"><a href="/categories">← Back</a></p>
+        <h2><%= formTitle %></h2>
+        <p>Create a new category for the inventory.</p>
+      </section>
+
+      <% if (errors.length > 0) { %>
+        <section class="card">
+          <h3>Please fix the following:</h3>
+          <ul class="error-list">
+            <% errors.forEach((error) => { %>
+              <li><%= error.msg %></li>
+            <% }) %>
+          </ul>
+        </section>
+      <% } %>
+
+      <section class="card">
+        <form class="form-stack" action="<%= formAction %>" method="post">
+          <div class="form-row">
+            <label for="name">Category name</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value="<%= category.name || "" %>"
+              required
+            />
+          </div>
+
+          <button class="button" type="submit"><%= submitLabel %></button>
+        </form>
+      </section>
+    </main>
+
+    <%- include("../partials/footer") %>
+  </body>
+</html>
