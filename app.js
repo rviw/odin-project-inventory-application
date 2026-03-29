@@ -17,6 +17,10 @@ const indexRouter = require("./routes/index");
 
 app.use("/", indexRouter);
 
+app.use((req, res) => {
+  res.status(404).send("Page not found");
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, (error) => {

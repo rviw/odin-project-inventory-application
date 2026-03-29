@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+* {
+  margin: 0;
+}
+
 :root {
   --text: #08060d;
   --text-muted: #6b6375;
@@ -66,6 +70,7 @@ h5,
 h6 {
   text-wrap: balance;
   line-height: 1.25;
+  margin-bottom: 1rem;
 }
 
 a {
@@ -114,17 +119,11 @@ main {
   flex: 1;
 }
 
-.hero {
-  margin-bottom: 2rem;
-}
-.hero > :first-child {
-  margin-top: 0;
-}
-
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   gap: 1rem;
+  margin: 2rem 0;
 }
 
 .card {
@@ -139,7 +138,7 @@ main {
   border-top: 1px solid var(--accent-border);
 }
 .site-footer .container {
-  padding: 0.25rem 0;
+  padding: 1rem 0;
   text-align: center;
   color: var(--accent);
 }
