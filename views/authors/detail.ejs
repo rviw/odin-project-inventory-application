@@ -11,6 +11,7 @@
         <p class="back-link"><a href="/authors">← Back</a></p>
         <h2><%= author.name %></h2>
         <p><%= books.length %> books by this author.</p>
+        <a class="button" href="/authors/<%= author.id %>/edit">Edit author</a>
       </section>
 
       <% if (books.length !== 0) { %>

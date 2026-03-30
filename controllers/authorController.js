@@ -60,8 +60,8 @@ const createAuthor = [
     .notEmpty()
     .withMessage("Author name is required.")
     .bail()
-    .isLength({ min: 2, max: 120 })
-    .withMessage("Author name must be between 2 and 120 characters.")
+    .isLength({ min: 2, max: 40 })
+    .withMessage("Author name must be between 2 and 40 characters.")
     .bail()
     .custom(async (value) => {
       const existingAuthor = await db.getAuthorByName(value);
@@ -93,9 +93,92 @@ const createAuthor = [
   },
 ];
 
+async function getAuthorEditPage(req, res) {
+  const id = getPositiveIntegerId(req.params.id);
+
+  if (!id) {
+    return res.status(404).send("Author not found");
+  }
+
+  const author = await db.getAuthorById(id);
+
+  if (!author) {
+    return res.status(404).send("Author not found");
+  }
+
+  res.render("authors/form", {
+    title: `Edit ${author.name}`,
+    formTitle: "Edit author",
+    formAction: `/authors/${author.id}/edit`,
+    submitLabel: "Save changes",
+    author,
+    errors: [],
+  });
+}
+
+const updateAuthor = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Author name is required.")
+    .bail()
+    .isLength({ min: 2, max: 40 })
+    .withMessage("Author name must be between 2 and 40 characters.")
+    .bail()
+    .custom(async (value, { req }) => {
+      const id = getPositiveIntegerId(req.params.id);
+
+      if (!id) {
+        throw new Error("Author not found.");
+      }
+
+      const existingAuthor = await db.getAuthorByName(value);
+
+      if (existingAuthor && existingAuthor.id !== id) {
+        throw new Error("Author name already exists.");
+      }
+
+      return true;
+    }),
+  async (req, res) => {
+    const id = getPositiveIntegerId(req.params.id);
+
+    if (!id) {
+      return res.status(404).send("Author not found");
+    }
+
+    const existingAuthor = await db.getAuthorById(id);
+
+    if (!existingAuthor) {
+      return res.status(404).send("Author not found");
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("authors/form", {
+        title: `Edit ${existingAuthor.name}`,
+        formTitle: "Edit author",
+        formAction: `/authors/${id}/edit`,
+        submitLabel: "Save changes",
+        author: { ...req.body, id },
+        errors: errors.array(),
+      });
+    }
+
+    const data = matchedData(req);
+
+    await db.updateAuthor(id, data.name);
+
+    res.redirect(`/authors/${id}`);
+  },
+];
+
 module.exports = {
   getAuthorList,
   getAuthorDetail,
   getAuthorCreatePage,
   createAuthor,
+  getAuthorEditPage,
+  updateAuthor,
 };

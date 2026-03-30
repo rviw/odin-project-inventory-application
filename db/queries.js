@@ -319,6 +319,17 @@ async function createAuthor(name) {
   return rows[0];
 }
 
+async function updateAuthor(id, name) {
+  await pool.query(
+    `
+      UPDATE authors
+      SET name = $1
+      WHERE id = $2
+    `,
+    [name, id],
+  );
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -340,4 +351,5 @@ module.exports = {
   updateCategory,
   deleteCategory,
   createAuthor,
+  updateAuthor,
 };
