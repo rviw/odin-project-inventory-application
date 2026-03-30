@@ -293,6 +293,32 @@ async function deleteCategory(id) {
   );
 }
 
+async function getAuthorByName(name) {
+  const { rows } = await pool.query(
+    `
+      SELECT id, name
+      FROM authors
+      WHERE LOWER(name) = LOWER($1)
+    `,
+    [name],
+  );
+
+  return rows[0];
+}
+
+async function createAuthor(name) {
+  const { rows } = await pool.query(
+    `
+      INSERT INTO authors (name)
+      VALUES ($1)
+      RETURNING id
+    `,
+    [name],
+  );
+
+  return rows[0];
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -302,6 +328,7 @@ module.exports = {
   getBooksByCategoryId,
   getAllAuthors,
   getAuthorById,
+  getAuthorByName,
   getBooksByAuthorId,
   getAllBooks,
   getBookById,
@@ -312,4 +339,5 @@ module.exports = {
   createCategory,
   updateCategory,
   deleteCategory,
+  createAuthor,
 };
