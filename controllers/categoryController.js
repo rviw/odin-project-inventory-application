@@ -1,5 +1,6 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const db = require("../db/queries");
+const { renderNotFound } = require("../utils/renderErrorPage");
 
 function getPositiveIntegerId(value) {
   const id = Number(value);
@@ -24,7 +25,7 @@ async function getCategoryDetail(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Category not found");
+    return renderNotFound(res, "Category not found.");
   }
 
   const [category, books] = await Promise.all([
@@ -33,7 +34,7 @@ async function getCategoryDetail(req, res) {
   ]);
 
   if (!category) {
-    return res.status(404).send("Category not found");
+    return renderNotFound(res, "Category not found.");
   }
 
   res.render("categories/detail", {
@@ -98,13 +99,13 @@ async function getCategoryEditPage(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Category not found");
+    return renderNotFound(res, "Category not found.");
   }
 
   const category = await db.getCategoryById(id);
 
   if (!category) {
-    return res.status(404).send("Category not found");
+    return renderNotFound(res, "Category not found.");
   }
 
   res.render("categories/form", {
@@ -145,13 +146,13 @@ const updateCategory = [
     const id = getPositiveIntegerId(req.params.id);
 
     if (!id) {
-      return res.status(404).send("Category not found");
+      return renderNotFound(res, "Category not found.");
     }
 
     const existingCategory = await db.getCategoryById(id);
 
     if (!existingCategory) {
-      return res.status(404).send("Category not found");
+      return renderNotFound(res, "Category not found.");
     }
 
     const errors = validationResult(req);
@@ -179,7 +180,7 @@ async function deleteCategory(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Category not found");
+    return renderNotFound(res, "Category not found.");
   }
 
   const [category, books] = await Promise.all([
@@ -188,7 +189,7 @@ async function deleteCategory(req, res) {
   ]);
 
   if (!category) {
-    return res.status(404).send("Category not found");
+    return renderNotFound(res, "Category not found.");
   }
 
   if (books.length > 0) {

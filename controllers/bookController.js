@@ -1,5 +1,6 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const db = require("../db/queries");
+const { renderNotFound } = require("../utils/renderErrorPage");
 
 function getPositiveIntegerId(value) {
   const id = Number(value);
@@ -24,13 +25,13 @@ async function getBookDetail(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Book not found");
+    return renderNotFound(res, "Book not found.");
   }
 
   const book = await db.getBookById(id);
 
   if (!book) {
-    return res.status(404).send("Book not found");
+    return renderNotFound(res, "Book not found.");
   }
 
   res.render("books/detail", {
@@ -183,7 +184,7 @@ async function getBookEditPage(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Book not found");
+    return renderNotFound(res, "Book not found.");
   }
 
   const [book, categories, authors] = await Promise.all([
@@ -193,7 +194,7 @@ async function getBookEditPage(req, res) {
   ]);
 
   if (!book) {
-    return res.status(404).send("Book not found");
+    return renderNotFound(res, "Book not found.");
   }
 
   res.render("books/form", {
@@ -229,13 +230,13 @@ const updateBook = [
     const id = getPositiveIntegerId(req.params.id);
 
     if (!id) {
-      return res.status(404).send("Book not found");
+      return renderNotFound(res, "Book not found.");
     }
 
     const existingBook = await db.getBookById(id);
 
     if (!existingBook) {
-      return res.status(404).send("Book not found");
+      return renderNotFound(res, "Book not found.");
     }
 
     const errors = validationResult(req);
@@ -278,13 +279,13 @@ async function deleteBook(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Book not found");
+    return renderNotFound(res, "Book not found.");
   }
 
   const book = await db.getBookById(id);
 
   if (!book) {
-    return res.status(404).send("Book not found");
+    return renderNotFound(res, "Book not found.");
   }
 
   await db.deleteBook(id);

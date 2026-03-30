@@ -1,9 +1,10 @@
 require("dotenv").config();
 
 const express = require("express");
-const app = express();
-
 const path = require("node:path");
+const { renderErrorPage, renderNotFound } = require("./utils/renderErrorPage");
+
+const app = express();
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -24,7 +25,27 @@ app.use("/authors", authorsRouter);
 app.use("/books", booksRouter);
 
 app.use((req, res) => {
-  res.status(404).send("Page not found");
+  return renderNotFound(res);
+});
+
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  console.error(err);
+
+  const isDevelopment = process.env.NODE_ENV !== "production";
+
+  return renderErrorPage(res, {
+    status: err.status || err.statusCode || 500,
+    title: "Something went wrong",
+    heading: "Something went wrong",
+    message: isDevelopment
+      ? err.message
+      : "Something went wrong on the server.",
+    stack: isDevelopment ? err.stack : null,
+  });
 });
 
 const PORT = process.env.PORT || 3000;

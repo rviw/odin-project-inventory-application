@@ -1,5 +1,6 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const db = require("../db/queries");
+const { renderNotFound } = require("../utils/renderErrorPage");
 
 function getPositiveIntegerId(value) {
   const id = Number(value);
@@ -24,7 +25,7 @@ async function getAuthorDetail(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Author not found");
+    return renderNotFound(res, "Author not found.");
   }
 
   const [author, books] = await Promise.all([
@@ -33,7 +34,7 @@ async function getAuthorDetail(req, res) {
   ]);
 
   if (!author) {
-    return res.status(404).send("Author not found");
+    return renderNotFound(res, "Author not found.");
   }
 
   res.render("authors/detail", {
@@ -98,13 +99,13 @@ async function getAuthorEditPage(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Author not found");
+    return renderNotFound(res, "Author not found.");
   }
 
   const author = await db.getAuthorById(id);
 
   if (!author) {
-    return res.status(404).send("Author not found");
+    return renderNotFound(res, "Author not found.");
   }
 
   res.render("authors/form", {
@@ -145,13 +146,13 @@ const updateAuthor = [
     const id = getPositiveIntegerId(req.params.id);
 
     if (!id) {
-      return res.status(404).send("Author not found");
+      return renderNotFound(res, "Author not found.");
     }
 
     const existingAuthor = await db.getAuthorById(id);
 
     if (!existingAuthor) {
-      return res.status(404).send("Author not found");
+      return renderNotFound(res, "Author not found.");
     }
 
     const errors = validationResult(req);
@@ -179,7 +180,7 @@ async function deleteAuthor(req, res) {
   const id = getPositiveIntegerId(req.params.id);
 
   if (!id) {
-    return res.status(404).send("Author not found");
+    return renderNotFound(res, "Author not found.");
   }
 
   const [author, books] = await Promise.all([
@@ -188,7 +189,7 @@ async function deleteAuthor(req, res) {
   ]);
 
   if (!author) {
-    return res.status(404).send("Author not found");
+    return renderNotFound(res, "Author not found.");
   }
 
   if (books.length > 0) {

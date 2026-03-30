@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("partials/head") %>
+  </head>
+  <body>
+    <%- include("partials/header") %>
+
+    <main class="container">
+      <section class="hero">
+        <h2><%= heading %></h2>
+        <p><%= message %></p>
+        <a class="button" href="/">Go home</a>
+      </section>
+
+      <% if (stack) { %>
+        <section class="card">
+          <h3>Error details</h3>
+          <pre class="error-stack"><%= stack %></pre>
+        </section>
+      <% } %>
+    </main>
+
+    <%- include("partials/footer") %>
+  </body>
+</html>
