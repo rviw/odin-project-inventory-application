@@ -27,11 +27,9 @@
         </div>
       </section>
 
-      <% if (deleteError) { %>
-        <section class="card">
-          <p class="error"><%= deleteError %></p>
-        </section>
-      <% } %>
+      <%- include("../partials/errors", {
+        errors: deleteError ? [{ msg: deleteError }] : [],
+      }) %>
 
       <% if (books.length !== 0) { %>
         <section class="card-grid">
