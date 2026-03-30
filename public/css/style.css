@@ -81,6 +81,10 @@ a {
   color: inherit;
   text-decoration: none;
 }
+a:hover,
+a:focus-visible {
+  color: var(--accent);
+}
 
 .container {
   width: min(960px, calc(100% - 2rem));
@@ -103,19 +107,11 @@ a {
   margin: 0;
   font-size: 1.75rem;
 }
-.site-title a:hover,
-.site-title a:focus-visible {
-  color: var(--accent);
-}
 
 .site-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
-}
-.site-nav a:hover,
-.site-nav a:focus-visible {
-  color: var(--accent);
 }
 
 main {
@@ -126,13 +122,6 @@ main {
 .back-link {
   margin-bottom: 1rem;
   color: var(--text-muted);
-}
-
-.card h3 a:hover,
-.card h3 a:focus-visible,
-.hero a:hover,
-.hero a:focus-visible {
-  color: var(--accent);
 }
 
 .hero + .card {
@@ -194,6 +183,7 @@ main > .card + .card {
   font-weight: 500;
   font-size: 0.9rem;
   margin-top: 1rem;
+  cursor: pointer;
 }
 
 .action-row {

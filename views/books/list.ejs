@@ -22,8 +22,14 @@
               <h3>
                 <a href="/books/<%= book.id %>"><%= book.title %></a>
               </h3>
-              <p>Author: <%= book.author_name %></p>
-              <p>Category: <%= book.category_name %></p>
+              <p>
+                Author:
+                <a href="/authors/<%= book.author_id %>"><%= book.author_name %></a>
+              </p>
+              <p>
+                Category:
+                <a href="/categories/<%= book.category_id %>"><%= book.category_name %></a>
+              </p>
               <p>Stock: <%= book.stock_quantity %></p>
             </article>
           <% }) %>

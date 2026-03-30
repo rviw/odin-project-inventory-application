@@ -82,6 +82,7 @@ async function getBooksByCategoryId(categoryId) {
         books.title,
         books.stock_quantity,
         books.isbn,
+        authors.id AS author_id,
         authors.name AS author_name
       FROM books
       JOIN authors ON authors.id = books.author_id
@@ -130,6 +131,7 @@ async function getBooksByAuthorId(authorId) {
         books.title,
         books.stock_quantity,
         books.isbn,
+        categories.id AS category_id,
         categories.name AS category_name
       FROM books
       JOIN categories ON categories.id = books.category_id
@@ -150,7 +152,9 @@ async function getAllBooks() {
       books.price,
       books.stock_quantity,
       books.isbn,
+      categories.id AS category_id,
       categories.name AS category_name,
+      authors.id AS author_id,
       authors.name AS author_name
     FROM books
     JOIN categories ON categories.id = books.category_id

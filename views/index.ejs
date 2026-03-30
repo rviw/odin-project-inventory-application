@@ -38,7 +38,7 @@
           <ul>
             <% lowStockBooks.forEach((book) => { %>
               <li>
-                <strong><%= book.title %></strong>
+                <a href="/books/<%= book.id %>"><strong><%= book.title %></strong></a>
                 by <%= book.author_name %>
                 - <%= book.stock_quantity %> left
               </li>

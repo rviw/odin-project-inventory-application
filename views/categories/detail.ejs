@@ -35,8 +35,13 @@
         <section class="card-grid">
           <% books.forEach((book) => { %>
             <article class="card">
-              <h3><%= book.title %></h3>
-              <p>Author: <%= book.author_name %></p>
+              <h3>
+                <a href="/books/<%= book.id %>"><%= book.title %></a>
+              </h3>
+              <p>
+                Author:
+                <a href="/authors/<%= book.author_id %>"><%= book.author_name %></a>
+              </p>
               <p>ISBN: <%= book.isbn %></p>
               <p>Stock: <%= book.stock_quantity %></p>
             </article>
