@@ -40,6 +40,7 @@ async function getAuthorDetail(req, res) {
     title: author.name,
     author,
     books,
+    deleteError: null,
   });
 }
 
@@ -174,6 +175,35 @@ const updateAuthor = [
   },
 ];
 
+async function deleteAuthor(req, res) {
+  const id = getPositiveIntegerId(req.params.id);
+
+  if (!id) {
+    return res.status(404).send("Author not found");
+  }
+
+  const [author, books] = await Promise.all([
+    db.getAuthorById(id),
+    db.getBooksByAuthorId(id),
+  ]);
+
+  if (!author) {
+    return res.status(404).send("Author not found");
+  }
+
+  if (books.length > 0) {
+    return res.status(400).render("authors/detail", {
+      title: author.name,
+      author,
+      books,
+      deleteError: "You cannot delete an author that still has books.",
+    });
+  }
+
+  await db.deleteAuthor(id);
+  res.redirect("/authors");
+}
+
 module.exports = {
   getAuthorList,
   getAuthorDetail,
@@ -181,4 +211,5 @@ module.exports = {
   createAuthor,
   getAuthorEditPage,
   updateAuthor,
+  deleteAuthor,
 };

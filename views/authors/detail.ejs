@@ -11,8 +11,25 @@
         <p class="back-link"><a href="/authors">← Back</a></p>
         <h2><%= author.name %></h2>
         <p><%= books.length %> books by this author.</p>
-        <a class="button" href="/authors/<%= author.id %>/edit">Edit author</a>
+
+        <div class="action-row">
+          <a class="button" href="/authors/<%= author.id %>/edit">Edit</a>
+
+          <form action="/authors/<%= author.id %>/delete" method="post">
+            <button
+              class="button button-danger"
+              type="submit"
+              onclick="return confirm('Delete this author?');"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
       </section>
+
+      <%- include("../partials/errors", {
+        errors: deleteError ? [{ msg: deleteError }] : [],
+      }) %>
 
       <% if (books.length !== 0) { %>
         <section class="card-grid">

@@ -330,6 +330,16 @@ async function updateAuthor(id, name) {
   );
 }
 
+async function deleteAuthor(id) {
+  await pool.query(
+    `
+      DELETE FROM authors
+      WHERE id = $1
+    `,
+    [id],
+  );
+}
+
 module.exports = {
   getInventoryCounts,
   getLowStockBooks,
@@ -352,4 +362,5 @@ module.exports = {
   deleteCategory,
   createAuthor,
   updateAuthor,
+  deleteAuthor,
 };
