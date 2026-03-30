@@ -71,11 +71,7 @@ Example:
 
 ```env
 PORT=3000
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=bookstore_inventory
-DB_USER=your_postgres_user
-DB_PASSWORD=your_postgres_password
+DATABASE_URL=postgresql://your_user:your_password@localhost:5432/bookstore_inventory
 ADMIN_PASSWORD=your_admin_password
 ```
 
