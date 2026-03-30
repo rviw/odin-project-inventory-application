@@ -114,6 +114,14 @@ a:focus-visible {
   gap: 1.5rem;
 }
 
+.site-nav a.is-active,
+.site-nav a.is-active:hover,
+.site-nav a.is-active:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 main {
   padding: 2.5rem 1rem;
   flex: 1;
@@ -191,6 +199,10 @@ main > .card + .card {
   font-size: 0.9rem;
   margin-top: 1rem;
   cursor: pointer;
+}
+
+.empty-message {
+  margin-top: 2rem;
 }
 
 .action-row {

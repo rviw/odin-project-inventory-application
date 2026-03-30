@@ -14,6 +14,22 @@ app.use(express.static(assetsPath));
 
 app.use(express.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+  const currentPath = req.path;
+
+  res.locals.isActive = (basePath) => {
+    if (basePath === "/") {
+      return currentPath === "/";
+    }
+
+    return (
+      currentPath === basePath || currentPath.startsWith(`${basePath}/`)
+    );
+  };
+
+  next();
+});
+
 const indexRouter = require("./routes/index");
 const categoriesRouter = require("./routes/categories");
 const authorsRouter = require("./routes/authors");
