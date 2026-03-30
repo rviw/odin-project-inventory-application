@@ -16,7 +16,12 @@
       <%- include("../partials/errors", { errors }) %>
 
       <section class="card">
-        <form class="form-stack" action="<%= formAction %>" method="post">
+        <form
+          class="form-stack protected-action-form"
+          action="<%= formAction %>"
+          method="post"
+        >
+          <input name="admin_password" type="hidden" />
           <div class="form-row">
             <label for="title">Title</label>
             <input

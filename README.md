@@ -76,6 +76,7 @@ DB_PORT=5432
 DB_NAME=bookstore_inventory
 DB_USER=your_postgres_user
 DB_PASSWORD=your_postgres_password
+ADMIN_PASSWORD=your_admin_password
 ```
 
 ### 4. Create tables and seed sample data

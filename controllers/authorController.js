@@ -1,6 +1,7 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const db = require("../db/queries");
 const { renderNotFound } = require("../utils/renderErrorPage");
+const { validateAdminPassword } = require("../utils/validateAdminPassword");
 
 function getPositiveIntegerId(value) {
   const id = Number(value);
@@ -74,6 +75,7 @@ const createAuthor = [
 
       return true;
     }),
+  validateAdminPassword(),
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -142,6 +144,7 @@ const updateAuthor = [
 
       return true;
     }),
+  validateAdminPassword(),
   async (req, res) => {
     const id = getPositiveIntegerId(req.params.id);
 
@@ -176,34 +179,48 @@ const updateAuthor = [
   },
 ];
 
-async function deleteAuthor(req, res) {
-  const id = getPositiveIntegerId(req.params.id);
+const deleteAuthor = [
+  validateAdminPassword(),
+  async (req, res) => {
+    const id = getPositiveIntegerId(req.params.id);
 
-  if (!id) {
-    return renderNotFound(res, "Author not found.");
-  }
+    if (!id) {
+      return renderNotFound(res, "Author not found.");
+    }
 
-  const [author, books] = await Promise.all([
-    db.getAuthorById(id),
-    db.getBooksByAuthorId(id),
-  ]);
+    const [author, books] = await Promise.all([
+      db.getAuthorById(id),
+      db.getBooksByAuthorId(id),
+    ]);
 
-  if (!author) {
-    return renderNotFound(res, "Author not found.");
-  }
+    if (!author) {
+      return renderNotFound(res, "Author not found.");
+    }
 
-  if (books.length > 0) {
-    return res.status(400).render("authors/detail", {
-      title: author.name,
-      author,
-      books,
-      deleteError: "You cannot delete an author that still has books.",
-    });
-  }
+    const errors = validationResult(req);
 
-  await db.deleteAuthor(id);
-  res.redirect("/authors");
-}
+    if (!errors.isEmpty()) {
+      return res.status(400).render("authors/detail", {
+        title: author.name,
+        author,
+        books,
+        deleteError: errors.array()[0].msg,
+      });
+    }
+
+    if (books.length > 0) {
+      return res.status(400).render("authors/detail", {
+        title: author.name,
+        author,
+        books,
+        deleteError: "You cannot delete an author that still has books.",
+      });
+    }
+
+    await db.deleteAuthor(id);
+    res.redirect("/authors");
+  },
+];
 
 module.exports = {
   getAuthorList,

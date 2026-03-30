@@ -1,6 +1,7 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const db = require("../db/queries");
 const { renderNotFound } = require("../utils/renderErrorPage");
+const { validateAdminPassword } = require("../utils/validateAdminPassword");
 
 function getPositiveIntegerId(value) {
   const id = Number(value);
@@ -37,6 +38,7 @@ async function getBookDetail(req, res) {
   res.render("books/detail", {
     title: book.title,
     book,
+    deleteError: null,
   });
 }
 
@@ -143,6 +145,7 @@ const createBook = [
 
     return true;
   }),
+  validateAdminPassword(),
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -226,6 +229,7 @@ const updateBook = [
 
     return true;
   }),
+  validateAdminPassword(),
   async (req, res) => {
     const id = getPositiveIntegerId(req.params.id);
 
@@ -275,23 +279,36 @@ const updateBook = [
   },
 ];
 
-async function deleteBook(req, res) {
-  const id = getPositiveIntegerId(req.params.id);
+const deleteBook = [
+  validateAdminPassword(),
+  async (req, res) => {
+    const id = getPositiveIntegerId(req.params.id);
 
-  if (!id) {
-    return renderNotFound(res, "Book not found.");
-  }
+    if (!id) {
+      return renderNotFound(res, "Book not found.");
+    }
 
-  const book = await db.getBookById(id);
+    const book = await db.getBookById(id);
 
-  if (!book) {
-    return renderNotFound(res, "Book not found.");
-  }
+    if (!book) {
+      return renderNotFound(res, "Book not found.");
+    }
 
-  await db.deleteBook(id);
+    const errors = validationResult(req);
 
-  res.redirect("/books");
-}
+    if (!errors.isEmpty()) {
+      return res.status(400).render("books/detail", {
+        title: book.title,
+        book,
+        deleteError: errors.array()[0].msg,
+      });
+    }
+
+    await db.deleteBook(id);
+
+    res.redirect("/books");
+  },
+];
 
 module.exports = {
   getBookList,

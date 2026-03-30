@@ -1,6 +1,7 @@
 const { body, validationResult, matchedData } = require("express-validator");
 const db = require("../db/queries");
 const { renderNotFound } = require("../utils/renderErrorPage");
+const { validateAdminPassword } = require("../utils/validateAdminPassword");
 
 function getPositiveIntegerId(value) {
   const id = Number(value);
@@ -74,6 +75,7 @@ const createCategory = [
 
       return true;
     }),
+  validateAdminPassword(),
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -142,6 +144,7 @@ const updateCategory = [
 
       return true;
     }),
+  validateAdminPassword(),
   async (req, res) => {
     const id = getPositiveIntegerId(req.params.id);
 
@@ -176,34 +179,48 @@ const updateCategory = [
   },
 ];
 
-async function deleteCategory(req, res) {
-  const id = getPositiveIntegerId(req.params.id);
+const deleteCategory = [
+  validateAdminPassword(),
+  async (req, res) => {
+    const id = getPositiveIntegerId(req.params.id);
 
-  if (!id) {
-    return renderNotFound(res, "Category not found.");
-  }
+    if (!id) {
+      return renderNotFound(res, "Category not found.");
+    }
 
-  const [category, books] = await Promise.all([
-    db.getCategoryById(id),
-    db.getBooksByCategoryId(id),
-  ]);
+    const [category, books] = await Promise.all([
+      db.getCategoryById(id),
+      db.getBooksByCategoryId(id),
+    ]);
 
-  if (!category) {
-    return renderNotFound(res, "Category not found.");
-  }
+    if (!category) {
+      return renderNotFound(res, "Category not found.");
+    }
 
-  if (books.length > 0) {
-    return res.status(400).render("categories/detail", {
-      title: category.name,
-      category,
-      books,
-      deleteError: "You cannot delete a category that still has books.",
-    });
-  }
+    const errors = validationResult(req);
 
-  await db.deleteCategory(id);
-  res.redirect("/categories");
-}
+    if (!errors.isEmpty()) {
+      return res.status(400).render("categories/detail", {
+        title: category.name,
+        category,
+        books,
+        deleteError: errors.array()[0].msg,
+      });
+    }
+
+    if (books.length > 0) {
+      return res.status(400).render("categories/detail", {
+        title: category.name,
+        category,
+        books,
+        deleteError: "You cannot delete a category that still has books.",
+      });
+    }
+
+    await db.deleteCategory(id);
+    res.redirect("/categories");
+  },
+];
 
 module.exports = {
   getCategoryList,

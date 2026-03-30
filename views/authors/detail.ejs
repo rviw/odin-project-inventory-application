@@ -15,11 +15,15 @@
         <div class="action-row">
           <a class="button" href="/authors/<%= author.id %>/edit">Edit</a>
 
-          <form action="/authors/<%= author.id %>/delete" method="post">
+          <form
+            class="protected-action-form"
+            action="/authors/<%= author.id %>/delete"
+            method="post"
+          >
+            <input name="admin_password" type="hidden" />
             <button
               class="button button-danger"
               type="submit"
-              onclick="return confirm('Delete this author?');"
             >
               Delete
             </button>

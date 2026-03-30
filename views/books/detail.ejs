@@ -15,17 +15,25 @@
         <div class="action-row">
           <a class="button" href="/books/<%= book.id %>/edit">Edit</a>
 
-          <form action="/books/<%= book.id %>/delete" method="post">
+          <form
+            class="protected-action-form"
+            action="/books/<%= book.id %>/delete"
+            method="post"
+          >
+            <input name="admin_password" type="hidden" />
             <button
               class="button button-danger"
               type="submit"
-              onclick="return confirm('Delete this book?');"
             >
               Delete
             </button>
           </form>
         </div>
       </section>
+
+      <%- include("../partials/errors", {
+        errors: deleteError ? [{ msg: deleteError }] : [],
+      }) %>
 
       <section class="card-grid">
         <article class="card">
