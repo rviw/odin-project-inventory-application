@@ -168,16 +168,7 @@ const createBook = [
     }
 
     const data = matchedData(req);
-
-    const newBook = await db.createBook({
-      title: data.title,
-      description: data.description,
-      price: data.price,
-      stockQuantity: data.stock_quantity,
-      isbn: data.isbn,
-      categoryId: data.category_id,
-      authorId: data.author_id,
-    });
+    const newBook = await db.createBook(data);
 
     res.redirect(`/books/${newBook.id}`);
   },
@@ -264,16 +255,7 @@ const updateBook = [
     }
 
     const data = matchedData(req);
-
-    await db.updateBook(id, {
-      title: data.title,
-      description: data.description,
-      price: data.price,
-      stockQuantity: data.stock_quantity,
-      isbn: data.isbn,
-      categoryId: data.category_id,
-      authorId: data.author_id,
-    });
+    await db.updateBook(id, data);
 
     res.redirect(`/books/${id}`);
   },

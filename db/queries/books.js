@@ -1,4 +1,19 @@
 const pool = require("../pool");
+const { createCrudQueries } = require("./createCrudQueries");
+
+const bookQueries = createCrudQueries({
+  pool,
+  tableName: "books",
+  insertColumns: [
+    "title",
+    "description",
+    "price",
+    "stock_quantity",
+    "isbn",
+    "category_id",
+    "author_id",
+  ],
+});
 
 async function getAllBooks() {
   const { rows } = await pool.query(`
@@ -47,76 +62,28 @@ async function getBookById(bookId) {
 }
 
 async function getBookByIsbn(isbn) {
-  const { rows } = await pool.query(
-    `
-      SELECT id
-      FROM books
-      WHERE isbn = $1
-    `,
-    [isbn],
-  );
-
-  return rows[0];
+  return bookQueries.findUnique({
+    where: { isbn },
+  });
 }
 
-async function createBook({
-  title,
-  description,
-  price,
-  stockQuantity,
-  isbn,
-  categoryId,
-  authorId,
-}) {
-  const { rows } = await pool.query(
-    `
-      INSERT INTO books (
-        title,
-        description,
-        price,
-        stock_quantity,
-        isbn,
-        category_id,
-        author_id
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING id
-    `,
-    [title, description, price, stockQuantity, isbn, categoryId, authorId],
-  );
-
-  return rows[0];
+async function createBook(data) {
+  return bookQueries.create({
+    data,
+  });
 }
 
-async function updateBook(
-  id,
-  { title, description, price, stockQuantity, isbn, categoryId, authorId },
-) {
-  await pool.query(
-    `
-      UPDATE books
-      SET
-        title = $1,
-        description = $2,
-        price = $3,
-        stock_quantity = $4,
-        isbn = $5,
-        category_id = $6,
-        author_id = $7
-      WHERE id = $8
-    `,
-    [title, description, price, stockQuantity, isbn, categoryId, authorId, id],
-  );
+async function updateBook(id, data) {
+  await bookQueries.update({
+    where: { id },
+    data,
+  });
 }
 
 async function deleteBook(id) {
-  await pool.query(
-    `
-      DELETE FROM books
-      WHERE id = $1
-    `,
-    [id],
-  );
+  await bookQueries.delete({
+    where: { id },
+  });
 }
 
 module.exports = {

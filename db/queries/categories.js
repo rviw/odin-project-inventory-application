@@ -1,4 +1,12 @@
 const pool = require("../pool");
+const { createCrudQueries } = require("./createCrudQueries");
+
+const categoryQueries = createCrudQueries({
+  pool,
+  tableName: "categories",
+  selectColumns: ["id", "name"],
+  insertColumns: ["name"],
+});
 
 async function getAllCategories() {
   const { rows } = await pool.query(
@@ -18,29 +26,16 @@ async function getAllCategories() {
 }
 
 async function getCategoryById(categoryId) {
-  const { rows } = await pool.query(
-    `
-      SELECT id, name
-      FROM categories
-      WHERE id = $1
-    `,
-    [categoryId],
-  );
-
-  return rows[0];
+  return categoryQueries.findUnique({
+    where: { id: categoryId },
+  });
 }
 
 async function getCategoryByName(name) {
-  const { rows } = await pool.query(
-    `
-      SELECT id, name
-      FROM categories
-      WHERE LOWER(name) = LOWER($1)
-    `,
-    [name],
-  );
-
-  return rows[0];
+  return categoryQueries.findUnique({
+    where: { name },
+    caseInsensitive: true,
+  });
 }
 
 async function getBooksByCategoryId(categoryId) {
@@ -65,37 +60,22 @@ async function getBooksByCategoryId(categoryId) {
 }
 
 async function createCategory(name) {
-  const { rows } = await pool.query(
-    `
-      INSERT INTO categories (name)
-      VALUES ($1)
-      RETURNING id
-    `,
-    [name],
-  );
-
-  return rows[0];
+  return categoryQueries.create({
+    data: { name },
+  });
 }
 
 async function updateCategory(id, name) {
-  await pool.query(
-    `
-      UPDATE categories
-      SET name = $1
-      WHERE id = $2
-    `,
-    [name, id],
-  );
+  await categoryQueries.update({
+    where: { id },
+    data: { name },
+  });
 }
 
 async function deleteCategory(id) {
-  await pool.query(
-    `
-      DELETE FROM categories
-      WHERE id = $1
-    `,
-    [id],
-  );
+  await categoryQueries.delete({
+    where: { id },
+  });
 }
 
 module.exports = {

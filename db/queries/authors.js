@@ -1,4 +1,12 @@
 const pool = require("../pool");
+const { createCrudQueries } = require("./createCrudQueries");
+
+const authorQueries = createCrudQueries({
+  pool,
+  tableName: "authors",
+  selectColumns: ["id", "name"],
+  insertColumns: ["name"],
+});
 
 async function getAllAuthors() {
   const { rows } = await pool.query(`
@@ -16,29 +24,16 @@ async function getAllAuthors() {
 }
 
 async function getAuthorById(authorId) {
-  const { rows } = await pool.query(
-    `
-      SELECT id, name
-      FROM authors
-      WHERE id = $1
-    `,
-    [authorId],
-  );
-
-  return rows[0];
+  return authorQueries.findUnique({
+    where: { id: authorId },
+  });
 }
 
 async function getAuthorByName(name) {
-  const { rows } = await pool.query(
-    `
-      SELECT id, name
-      FROM authors
-      WHERE LOWER(name) = LOWER($1)
-    `,
-    [name],
-  );
-
-  return rows[0];
+  return authorQueries.findUnique({
+    where: { name },
+    caseInsensitive: true,
+  });
 }
 
 async function getBooksByAuthorId(authorId) {
@@ -63,37 +58,22 @@ async function getBooksByAuthorId(authorId) {
 }
 
 async function createAuthor(name) {
-  const { rows } = await pool.query(
-    `
-      INSERT INTO authors (name)
-      VALUES ($1)
-      RETURNING id
-    `,
-    [name],
-  );
-
-  return rows[0];
+  return authorQueries.create({
+    data: { name },
+  });
 }
 
 async function updateAuthor(id, name) {
-  await pool.query(
-    `
-      UPDATE authors
-      SET name = $1
-      WHERE id = $2
-    `,
-    [name, id],
-  );
+  await authorQueries.update({
+    where: { id },
+    data: { name },
+  });
 }
 
 async function deleteAuthor(id) {
-  await pool.query(
-    `
-      DELETE FROM authors
-      WHERE id = $1
-    `,
-    [id],
-  );
+  await authorQueries.delete({
+    where: { id },
+  });
 }
 
 module.exports = {
